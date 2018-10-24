@@ -58055,6 +58055,10 @@ var App = function (_Component) {
                     posts: [response.data]
                 });
             });
+            // clear the state body
+            this.setState({
+                body: ''
+            });
         }
     }, {
         key: 'handleChange',
@@ -58099,7 +58103,14 @@ var App = function (_Component) {
                                     __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                                         'div',
                                         { className: 'form-group' },
-                                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('textarea', { onChange: this.handleChange, className: 'form-control', rows: '5', maxLength: '140', placeholder: 'Whats up?', required: true })
+                                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('textarea', {
+                                            value: this.state.body,
+                                            onChange: this.handleChange,
+                                            className: 'form-control',
+                                            rows: '5',
+                                            maxLength: '140',
+                                            placeholder: 'Whats up?',
+                                            required: true })
                                     ),
                                     __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { type: 'submit', value: 'Post', className: 'form-control' })
                                 )

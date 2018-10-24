@@ -26,6 +26,10 @@ class App extends Component {
                     posts: [response.data]
                 })
             });
+        // clear the state body
+        this.setState({
+            body: ''
+        });
     }
 
     handleChange(e) {
@@ -51,7 +55,14 @@ class App extends Component {
                             <div className="card-body">
                                 <form onSubmit={this.handleSubmit}>
                                     <div className="form-group">
-                                        <textarea onChange={this.handleChange} className="form-control" rows="5" maxLength="140" placeholder="Whats up?" required></textarea>
+                                        <textarea 
+                                            value={this.state.body} 
+                                            onChange={this.handleChange} 
+                                            className="form-control" 
+                                            rows="5" 
+                                            maxLength="140" 
+                                            placeholder="Whats up?" 
+                                            required></textarea>
                                     </div>
                                     <input type="submit" value="Post" className="form-control"></input>
                                 </form>
