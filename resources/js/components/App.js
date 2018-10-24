@@ -6,7 +6,8 @@ class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            body: ''
+            body: '',
+            posts: []
         };
         // bind
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -15,8 +16,16 @@ class App extends Component {
 
     handleSubmit(e) {
         e.preventDefault();
-        this.postData();
-        console.log(this.state.body);
+        //this.postData();
+        axios
+            .post('/posts', {
+                body: this.state.body
+            })
+            .then(response => {
+                this.setState({
+                    posts: [response.data]
+                })
+            });
     }
 
     handleChange(e) {
@@ -52,10 +61,10 @@ class App extends Component {
 
                     <div className="col-md-6">
                         <div className="card">
-                            <div className="card-header">App Component</div>
+                            <div className="card-header">Recent tweets</div>
 
                             <div className="card-body">
-                                I'm an app component!
+                                {this.state.posts.map(post => <div key={post.id}>{post.body}</div>)}
                             </div>
                         </div>
                     </div>
