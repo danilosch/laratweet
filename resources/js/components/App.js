@@ -7,11 +7,33 @@ class App extends Component {
         super(props);
         this.state = {
             body: '',
-            posts: []
+            posts: [],
+            loading: false
         };
         // bind
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
+    }
+
+    getPosts() {
+        //this.setState({ loading: true });
+        axios.get('/posts')
+            .then(response => this.setState({
+                posts: [...response.data.posts]
+                //loading: false
+            }));
+    }
+
+    componentWillMount() {
+        this.getPosts();
+    }
+
+    componentDidMount() {
+        this.interval = setInterval(() => this.getPosts(), 10000);
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.interval);
     }
 
     handleSubmit(e) {
@@ -23,7 +45,7 @@ class App extends Component {
             })
             .then(response => {
                 this.setState({
-                    posts: [response.data]
+                    posts: [response.data, ...this.state.posts]
                 })
             });
         // clear the state body
@@ -44,6 +66,25 @@ class App extends Component {
         });
     }
 
+    renderPosts() {
+        return this.state.posts.map(post => (
+            <div key={post.id} className="media">
+                <div className="media-left">
+                    <img src={post.user.avatar} className="media-object mr-2" />
+                </div>
+                <div className="media-body">
+                    <div className="user">
+                        <a href={`users/${post.user.username}`}>
+                            <b>{post.user.username}</b>
+                        </a>{' '}
+                        - {post.humanCreatedAt}
+                    </div>
+                    <p>{post.body}</p>
+                </div>
+            </div>
+        ));
+    }
+
     render() {
         return (
             <div className="container">
@@ -55,13 +96,13 @@ class App extends Component {
                             <div className="card-body">
                                 <form onSubmit={this.handleSubmit}>
                                     <div className="form-group">
-                                        <textarea 
-                                            value={this.state.body} 
-                                            onChange={this.handleChange} 
-                                            className="form-control" 
-                                            rows="5" 
-                                            maxLength="140" 
-                                            placeholder="Whats up?" 
+                                        <textarea
+                                            value={this.state.body}
+                                            onChange={this.handleChange}
+                                            className="form-control"
+                                            rows="5"
+                                            maxLength="140"
+                                            placeholder="Whats up?"
                                             required></textarea>
                                     </div>
                                     <input type="submit" value="Post" className="form-control"></input>
@@ -75,7 +116,7 @@ class App extends Component {
                             <div className="card-header">Recent tweets</div>
 
                             <div className="card-body">
-                                {this.state.posts.map(post => <div key={post.id}>{post.body}</div>)}
+                                {!this.state.loading ? this.renderPosts() : 'Loading...'}
                             </div>
                         </div>
                     </div>
