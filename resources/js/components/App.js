@@ -29,11 +29,18 @@ class App extends Component {
     }
 
     componentDidMount() {
-        this.interval = setInterval(() => this.getPosts(), 10000);
+        Echo.private('new-post').listen('PostCreated', (e) => {
+            // console.log('from pusher', e.post);
+            // this.setState({ posts: [e.post, ...this.state.posts] });
+            if (window.Laravel.user.following.includes(e.post.user_id)) {
+                this.setState({ posts: [e.post, ...this.state.posts] });
+            }
+        })
+        // this.interval = setInterval(() => this.getPosts(), 10000);
     }
 
     componentWillUnmount() {
-        clearInterval(this.interval);
+        // clearInterval(this.interval);
     }
 
     handleSubmit(e) {
@@ -44,6 +51,7 @@ class App extends Component {
                 body: this.state.body
             })
             .then(response => {
+                // console.log('from handleSubmit', response);
                 this.setState({
                     posts: [response.data, ...this.state.posts]
                 })
@@ -87,7 +95,7 @@ class App extends Component {
 
     render() {
         return (
-            <div className="container">
+            <div className="container-fluid">
                 <div className="row justify-content-center">
                     <div className="col-md-6">
                         <div className="card">
@@ -111,15 +119,17 @@ class App extends Component {
                         </div>
                     </div>
 
-                    <div className="col-md-6">
-                        <div className="card">
-                            <div className="card-header">Recent tweets</div>
+                    {this.state.posts.length > 0 && (
+                        <div className="col-md-6">
+                            <div className="card">
+                                <div className="card-header">Recent tweets</div>
 
-                            <div className="card-body">
-                                {!this.state.loading ? this.renderPosts() : 'Loading...'}
+                                <div className="card-body">
+                                    {!this.state.loading ? this.renderPosts() : 'Loading...'}
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    )}
                 </div>
             </div>
         );
